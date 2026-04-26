@@ -1,0 +1,75 @@
+[gd_scene format=3 uid="uid://btais2xbrn3a6"]
+
+[ext_resource type="PackedScene" uid="uid://mxd8i30edepc" path="res://player.tscn" id="1_u52ul"]
+[ext_resource type="PackedScene" uid="uid://yk4qghwjfpld" path="res://ui.tscn" id="2_vonw3"]
+[ext_resource type="Script" uid="uid://db3u0jxpxstnm" path="res://Scripts/camera_3d.gd" id="3_0b4ue"]
+[ext_resource type="Script" uid="uid://bcu8tmdql13ex" path="res://multiplayer_spawner.gd" id="5_f2txt"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5xgho"]
+sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+ground_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
+
+[sub_resource type="Sky" id="Sky_u52ul"]
+sky_material = SubResource("ProceduralSkyMaterial_5xgho")
+
+[sub_resource type="Environment" id="Environment_vonw3"]
+background_mode = 2
+sky = SubResource("Sky_u52ul")
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u52ul"]
+albedo_color = Color(0.25461757, 0.25461754, 0.25461754, 1)
+
+[node name="Level" type="Node3D" unique_id=46874414]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=121797379]
+environment = SubResource("Environment_vonw3")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1165717128]
+transform = Transform3D(-0.8660254, -0.43301278, 0.25, 0, 0.49999997, 0.86602545, -0.50000006, 0.75, -0.43301266, 0, 0, 0)
+shadow_enabled = true
+
+[node name="Geometry" type="Node3D" parent="." unique_id=1525135777]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Geometry" unique_id=1148315323]
+use_collision = true
+size = Vector3(15, 1, 15)
+material = SubResource("StandardMaterial3D_u52ul")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Geometry" unique_id=1221381026]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, -8)
+visible = false
+use_collision = true
+size = Vector3(15, 1, 1)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="Geometry" unique_id=955926024]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2, 8)
+visible = false
+use_collision = true
+size = Vector3(15, 1, 1)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Geometry" unique_id=663457101]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -8.050224, 2, 0.038826942)
+visible = false
+use_collision = true
+size = Vector3(15, 1, 1)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="Geometry" unique_id=351581933]
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 7.9497757, 2, 0.038826942)
+visible = false
+use_collision = true
+size = Vector3(15, 1, 1)
+
+[node name="UI" parent="." unique_id=740520470 instance=ExtResource("2_vonw3")]
+unique_name_in_owner = true
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1078880619]
+transform = Transform3D(1, 0, 0, 0, 0.7855438, 0.61880606, 0, -0.61880606, 0.7855438, 0, 21.271244, 28.724571)
+fov = 22.5
+script = ExtResource("3_0b4ue")
+
+[node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1308195438]
+_spawnable_scenes = PackedStringArray("uid://mxd8i30edepc")
+spawn_path = NodePath("..")
+script = ExtResource("5_f2txt")
+network_player = ExtResource("1_u52ul")

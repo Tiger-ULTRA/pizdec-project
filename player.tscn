@@ -1,0 +1,73 @@
+[gd_scene format=3 uid="uid://mxd8i30edepc"]
+
+[ext_resource type="Script" uid="uid://cn0qjv36ak8fs" path="res://Scripts/player.gd" id="1_4flbx"]
+[ext_resource type="Texture2D" uid="uid://ncvbgwkvxmdr" path="res://Assets/ready_indicator.png" id="3_hqtel"]
+[ext_resource type="Texture2D" uid="uid://chm6pll65qmay" path="res://Assets/not_ready_indicator.png" id="3_i3pqv"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_4flbx"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_4flbx"]
+radius = 0.6
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sh265"]
+albedo_color = Color(0.9363493, 0.34140578, 3.85046e-07, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_sh265"]
+material = SubResource("StandardMaterial3D_sh265")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_onrkg"]
+height = 2.2817383
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_sweqy"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_i3pqv")
+}, {
+"duration": 1.0,
+"texture": ExtResource("3_hqtel")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_sweqy"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath(".:rotation")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("ReadinessIndicator:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
+[node name="Player" type="CharacterBody3D" unique_id=235051829]
+script = ExtResource("1_4flbx")
+
+[node name="MeshBody" type="MeshInstance3D" parent="." unique_id=2096335390]
+transform = Transform3D(1, 0, 0, 0, 0.7, 0, 0, 0, 1, 0, 0.71466255, 0)
+mesh = SubResource("CapsuleMesh_4flbx")
+
+[node name="MeshHead" type="MeshInstance3D" parent="." unique_id=17789278]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7649577, 0)
+mesh = SubResource("SphereMesh_4flbx")
+
+[node name="MeshVisor" type="MeshInstance3D" parent="MeshHead" unique_id=1865397101]
+transform = Transform3D(0.6, 0, 0, 0, 0.3, 0, 0, 0, 0.18, 0, 0, -0.5824873)
+mesh = SubResource("BoxMesh_sh265")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2129365332]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.1408691, 0)
+shape = SubResource("CapsuleShape3D_onrkg")
+metadata/_edit_lock_ = true
+
+[node name="ReadinessIndicator" type="AnimatedSprite3D" parent="." unique_id=2081663690]
+transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 3, 0)
+billboard = 2
+sprite_frames = SubResource("SpriteFrames_sweqy")
+speed_scale = 0.0
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=1427854708]
+replication_config = SubResource("SceneReplicationConfig_sweqy")

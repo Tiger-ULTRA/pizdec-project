@@ -1,0 +1,106 @@
+[gd_scene format=3 uid="uid://yk4qghwjfpld"]
+
+[ext_resource type="Script" uid="uid://b1jwy6n4yaviv" path="res://ui.gd" id="1_fyqef"]
+
+[sub_resource type="Theme" id="Theme_27fn8"]
+
+[node name="UI" type="Control" unique_id=740520470]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+script = ExtResource("1_fyqef")
+
+[node name="UpdateLobbiesList" type="Timer" parent="." unique_id=1112621664]
+unique_name_in_owner = true
+wait_time = 2.0
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1988677303]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="MarginContainer" type="MarginContainer" parent="PanelContainer" unique_id=1362316945]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer" unique_id=523612769]
+layout_mode = 2
+
+[node name="LobbyList" type="ItemList" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=1721581246]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 120)
+layout_mode = 2
+
+[node name="VBoxContainer" type="HSplitContainer" parent="PanelContainer/MarginContainer/VBoxContainer" unique_id=59750866]
+layout_mode = 2
+
+[node name="HostButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1739447655]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "host"
+
+[node name="ConnectButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/VBoxContainer" unique_id=1715479425]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "connect"
+
+[node name="TabContainer" type="TabContainer" parent="." unique_id=1673830531]
+layout_mode = 0
+offset_left = 6.0
+offset_top = 483.0
+offset_right = 254.0
+offset_bottom = 714.0
+grow_vertical = 0
+current_tab = 1
+
+[node name="Log" type="MarginContainer" parent="TabContainer" unique_id=1663125708]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+metadata/_tab_index = 0
+
+[node name="OverviewLog" type="RichTextLabel" parent="TabContainer/Log" unique_id=1499438814]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+theme = SubResource("Theme_27fn8")
+theme_override_font_sizes/normal_font_size = 8
+scroll_following = true
+autowrap_mode = 0
+vertical_alignment = 2
+
+[node name="Internal_Log" type="MarginContainer" parent="TabContainer" unique_id=1970463602]
+custom_minimum_size = Vector2(600, 0)
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 6
+theme_override_constants/margin_bottom = 6
+metadata/_tab_index = 1
+
+[node name="DeepLog" type="RichTextLabel" parent="TabContainer/Internal_Log" unique_id=88436941]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(600, 200)
+layout_mode = 2
+theme = SubResource("Theme_27fn8")
+theme_override_font_sizes/normal_font_size = 8
+scroll_following = true
+autowrap_mode = 0
+vertical_alignment = 2
+
+[connection signal="timeout" from="UpdateLobbiesList" to="." method="_on_update_lobbies_list_timeout"]
