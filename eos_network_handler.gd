@@ -12,6 +12,8 @@ var local_lobby: HLobby
 signal lobby_list_updated(lobbies: Array[HLobby])
 signal sdk_initialized
 signal log_callback(msg: String)
+signal connected_to_lobby(lobby: HLobby, is_host: bool)
+signal connection_to_lobby_failed
 
 func log_msg(msg: String):
 	log_callback.emit(msg + '\n' + '-'.repeat(250))
@@ -91,15 +93,19 @@ func create_lobby():
 	var new_lobby = await HLobbies.create_lobby_async(create_opts)
 	if new_lobby == null:
 		log_msg("Lobby creation failed")
+		connection_to_lobby_failed.emit()
 		return
 	
 	# Start listening for P2P
 	var result := peer.create_server("testgame")
 	if result != OK:
 		printerr("Failed to create client: " + EOS.result_str(result))
+		connection_to_lobby_failed.emit()
 		return
 	
 	multiplayer.multiplayer_peer = peer
+	
+	connected_to_lobby.emit(new_lobby, true)
 	log_msg("Lobby creation succesful: \n	lobby_id = " + new_lobby.lobby_id)
 	
 	is_server = true
@@ -115,10 +121,14 @@ func join_lobby(lobby: HLobby) -> bool:
 	
 	var result := peer.create_client("testgame", lobby.owner_product_user_id)
 	if result != OK:
+		connection_to_lobby_failed.emit()
 		printerr("Failed to create client: " + EOS.result_str(result))
 		return false
 	
+	local_lobby = lobby
+	connected_to_lobby.emit(lobby, false)
 	log_msg("Connected to lobby " + lobby.lobby_id)
+	
 	multiplayer.multiplayer_peer = peer
 	
 	return true
@@ -128,18 +138,29 @@ func join_lobby_by_id(lobby_id: String) -> bool:
 	var lobby = await HLobbies.join_by_id_async(lobby_id)
 	
 	if not lobby:
+		connection_to_lobby_failed.emit()
 		log_msg("Failed to connect to lobby")
 		return false
 	
 	var result := peer.create_client("testgame", lobby.owner_product_user_id)
 	if result != OK:
+		connection_to_lobby_failed.emit()
 		printerr("Failed to create client: " + EOS.result_str(result))
 		return false
-	
+
+	local_lobby = lobby
+	connected_to_lobby.emit(lobby, false)
 	log_msg("Connected to lobby " + lobby.lobby_id)
+	
 	multiplayer.multiplayer_peer = peer
 	
 	return true
+
+func leave_current_lobby():
+	log_msg("Leaving lobby...")
+	var res = await local_lobby.leave_async()
+	if res: log_msg("Lobby leaved")
+	else: log_msg("Lobby was not left")
 
 func _on_peer_connected(peer_id: int) -> void:
 	log_msg("Player %d connected" % peer_id)
