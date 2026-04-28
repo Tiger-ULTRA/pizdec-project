@@ -18,6 +18,8 @@ func _ready() -> void:
 	NetworkHandler.connected_to_lobby.connect(func switch_lo_inlobby_ui(lobby: HLobby, is_host: bool):
 		%NetworkStatusUI.current_tab = 1
 		%InLobbyInfo.text = "Currently in lobby: %s\n%s" % [lobby.lobby_id, "HOST" if is_host else "PEER"]
+		%LeaveLobbyButton.text = "Close lobby" if is_host else "Leave lobby"
+		%StartGameButton.visible = is_host
 		%HostButton.disabled = false
 		%ConnectButton.disabled = false
 	)
@@ -55,13 +57,29 @@ func _ready() -> void:
 		%NetworkStatusUI.current_tab = 0
 	)
 	
+	multiplayer.server_disconnected.connect(func left_lobby():
+		%NetworkStatusUI.current_tab = 0
+	)
+	
+	%StartGameButton.pressed.connect(func start_game():
+		GameManager.start_game.rpc()
+	)
+	
+	GameManager.all_players_ready.connect(func():
+		if not NetworkHandler.is_server: return
+		%StartGameButton.disabled = false
+	)
+	
+	GameManager.not_all_player_ready.connect(func():
+		if not NetworkHandler.is_server: return
+		%StartGameButton.disabled = true
+	)
+	
+	
 	await NetworkHandler.sdk_initialized
 	%HostButton.disabled = false
 	%ConnectButton.disabled = false
 	%UpdateLobbiesList.start()
-	
-func _on_peer_pressed() -> void:
-	NetworkHandler.search_lobbies()
 
 func _on_update_lobbies_list_timeout() -> void:
 	NetworkHandler.search_lobbies()

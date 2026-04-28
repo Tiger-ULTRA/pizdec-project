@@ -14,6 +14,8 @@ signal sdk_initialized
 signal log_callback(msg: String)
 signal connected_to_lobby(lobby: HLobby, is_host: bool)
 signal connection_to_lobby_failed
+signal hosted_lobby
+signal closed_lobby
 
 func log_msg(msg: String):
 	log_callback.emit(msg + '\n' + '-'.repeat(250))
@@ -66,12 +68,7 @@ func exit_game():
 	if peer:
 		peer.close()
 	
-	if multiplayer.multiplayer_peer:
-		multiplayer.multiplayer_peer = null
-	if is_server and local_lobby:
-		await local_lobby.destroy_async()
-	elif local_lobby:
-		await local_lobby.leave_async()
+	if local_lobby: await leave_current_lobby()
 	
 func _exit_tree() -> void:
 	exit_game()
@@ -105,6 +102,7 @@ func create_lobby():
 	
 	multiplayer.multiplayer_peer = peer
 	
+	hosted_lobby.emit()
 	connected_to_lobby.emit(new_lobby, true)
 	log_msg("Lobby creation succesful: \n	lobby_id = " + new_lobby.lobby_id)
 	
@@ -157,10 +155,20 @@ func join_lobby_by_id(lobby_id: String) -> bool:
 	return true
 
 func leave_current_lobby():
+	if is_server:
+		log_msg("Closing lobby...")
+		await local_lobby.destroy_async()
+		log_msg("Lobby closed")
+		multiplayer.multiplayer_peer.close()
+		closed_lobby.emit()
+		return
 	log_msg("Leaving lobby...")
 	var res = await local_lobby.leave_async()
-	if res: log_msg("Lobby leaved")
-	else: log_msg("Lobby was not left")
+	if not res: 
+		log_msg("Lobby was not left")
+		return
+	log_msg("Lobby leaved")
+	multiplayer.multiplayer_peer.close()
 
 func _on_peer_connected(peer_id: int) -> void:
 	log_msg("Player %d connected" % peer_id)

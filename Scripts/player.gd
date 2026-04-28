@@ -5,17 +5,27 @@ class_name Player
 const SPEED: float = 5.0
 const JUMP_VELOCITY: float = 4.5
 
+@export var is_ready: bool = false
+signal ready_state_changed(value: bool)
+
+func _ready() -> void:
+	ready_state_changed.connect(GameManager._check_all_ready.unbind(1))
+	
 
 func _enter_tree() -> void:
 	set_multiplayer_authority(name.to_int())
 
-func update_readiness_indicator(_value: bool) -> void:
-	if not is_multiplayer_authority(): return
-	$ReadinessIndicator.frame = ($ReadinessIndicator.frame + 1) % 2
+@rpc("any_peer", "call_local")
+func toogle_readiness() -> void:
+	
+	is_ready = not is_ready
+
+	ready_state_changed.emit(is_ready)
+	$ReadinessIndicator.frame = 1 if is_ready else 0
 
 func _input(event: InputEvent) -> void:
-	if event.is_action_pressed("toogle_readiness"):
-		update_readiness_indicator(1)
+	if not is_multiplayer_authority(): return
+	if event.is_action_pressed("toogle_readiness"): toogle_readiness.rpc()
 
 func _physics_process(delta: float) -> void:
 	if not is_multiplayer_authority(): return

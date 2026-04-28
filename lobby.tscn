@@ -1,9 +1,9 @@
 [gd_scene format=3 uid="uid://btais2xbrn3a6"]
 
-[ext_resource type="PackedScene" uid="uid://mxd8i30edepc" path="res://player.tscn" id="1_u52ul"]
-[ext_resource type="PackedScene" uid="uid://yk4qghwjfpld" path="res://ui.tscn" id="2_vonw3"]
-[ext_resource type="Script" uid="uid://db3u0jxpxstnm" path="res://Scripts/camera_3d.gd" id="3_0b4ue"]
-[ext_resource type="Script" uid="uid://bcu8tmdql13ex" path="res://multiplayer_spawner.gd" id="5_f2txt"]
+[ext_resource type="Script" uid="uid://db3u0jxpxstnm" path="res://Scripts/camera_3d.gd" id="1_2wvic"]
+[ext_resource type="PackedScene" uid="uid://yk4qghwjfpld" path="res://menu_ui.tscn" id="1_tftiq"]
+[ext_resource type="Script" uid="uid://bcu8tmdql13ex" path="res://Scripts/multiplayer_spawner.gd" id="2_tftiq"]
+[ext_resource type="PackedScene" uid="uid://mxd8i30edepc" path="res://player.tscn" id="3_1gg6n"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_5xgho"]
 sky_horizon_color = Color(0.66224277, 0.6717428, 0.6867428, 1)
@@ -20,7 +20,9 @@ tonemap_mode = 2
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_u52ul"]
 albedo_color = Color(0.25461757, 0.25461754, 0.25461754, 1)
 
-[node name="Level" type="Node3D" unique_id=46874414]
+[node name="Lobby" type="Node3D" unique_id=46874414]
+
+[node name="MenuUI" parent="." unique_id=740520470 instance=ExtResource("1_tftiq")]
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=121797379]
 environment = SubResource("Environment_vonw3")
@@ -60,16 +62,13 @@ visible = false
 use_collision = true
 size = Vector3(15, 1, 1)
 
-[node name="UI" parent="." unique_id=740520470 instance=ExtResource("2_vonw3")]
-unique_name_in_owner = true
-
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1078880619]
 transform = Transform3D(1, 0, 0, 0, 0.7855438, 0.61880606, 0, -0.61880606, 0.7855438, 0, 21.271244, 28.724571)
 fov = 22.5
-script = ExtResource("3_0b4ue")
+script = ExtResource("1_2wvic")
 
 [node name="PlayerSpawner" type="MultiplayerSpawner" parent="." unique_id=1308195438]
 _spawnable_scenes = PackedStringArray("uid://mxd8i30edepc")
 spawn_path = NodePath("..")
-script = ExtResource("5_f2txt")
-network_player = ExtResource("1_u52ul")
+script = ExtResource("2_tftiq")
+network_player = ExtResource("3_1gg6n")
